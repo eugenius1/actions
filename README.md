@@ -32,6 +32,19 @@ jobs:
       - uses: eugenius1/actions/claude-review/code@main
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+  security:
+    name: Security review
+    if: >-
+      !github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: eugenius1/actions/claude-review/security@main
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 ```
 
 The repo needs the `CLAUDE_CODE_OAUTH_TOKEN` secret (made with

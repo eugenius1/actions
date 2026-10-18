@@ -25,13 +25,16 @@ runs:
     - uses: anthropics/claude-code-action@v1
       with:
         claude_code_oauth_token: ${{ inputs.claude_code_oauth_token }}
-        # The action resets CLAUDE.md and .claude/ to the base branch in the
-        # working tree, so a diff against the working tree would miss them
+        # The command embeds a diff against the working tree, where the action
+        # resets CLAUDE.md and .claude/ to the base branch, so changes to them
+        # would be missed. gh pr diff is the committed diff, and it's allowed.
         prompt: |
           /security-review
 
-          Review the committed changes, `git diff origin/HEAD...HEAD`, not
-          the working tree.
+          The diff above is of the working tree, where CLAUDE.md and .claude/
+          have been reset to the base branch. Run
+          `gh pr diff ${{ github.event.pull_request.number }}` and review that
+          committed diff instead.
 
           Post anything you find as inline comments on PR
           ${{ github.event.pull_request.number }}, with confirmed: true

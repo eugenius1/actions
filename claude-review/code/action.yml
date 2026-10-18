@@ -25,9 +25,11 @@ runs:
         prompt: |
           /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }} --comment
 
-          This run is for head commit ${{ github.event.pull_request.head.sha }}.
-          Ignore the "Claude has already commented" check, but don't post an
-          issue that an earlier Claude comment on this PR already raised.
+          This run reviews head commit ${{ github.event.pull_request.head.sha }}.
+          In step 1, tell the eligibility agent to leave out the "Claude has
+          already commented" check: an earlier Claude comment is about an earlier
+          commit. Still don't post an issue that an earlier Claude comment on
+          this PR already raised.
         claude_args: >-
           --allowedTools
           "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
