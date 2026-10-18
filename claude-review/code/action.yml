@@ -30,6 +30,10 @@ runs:
           already commented" check: an earlier Claude comment is about an earlier
           commit. Still don't post an issue that an earlier Claude comment on
           this PR already raised.
+        # Show what Claude did in the job summary, so a run that posts nothing
+        # can be told apart from one that found nothing. Only same-repo PRs
+        # run this, so the content it echoes is trusted.
+        display_report: true
         claude_args: >-
           --allowedTools
           "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
