@@ -40,6 +40,10 @@ runs:
           ${{ github.event.pull_request.number }}, with confirmed: true
           (the tool holds back anything else); if there is nothing, post
           nothing.
+        # Show what Claude did in the job summary, so a run that posts nothing
+        # can be told apart from one that found nothing. Only same-repo PRs
+        # run this, so the content it echoes is trusted.
+        display_report: true
         claude_args: >-
           --allowedTools
           "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
