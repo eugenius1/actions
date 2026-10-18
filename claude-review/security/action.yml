@@ -1,0 +1,42 @@
+name: Claude security review
+description: Runs /security-review on the current PR and posts confirmed findings as inline comments.
+
+inputs:
+  claude_code_oauth_token:
+    description: The repo's CLAUDE_CODE_OAUTH_TOKEN secret
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # /security-review diffs against origin/HEAD, which checkout never sets
+    # and which would be the default branch rather than this PR's base.
+    - uses: actions/checkout@v7
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+
+    - name: Point origin/HEAD at the PR's base branch
+      shell: bash
+      env:
+        BASE: ${{ github.event.pull_request.base.ref }}
+      run: git symbolic-ref refs/remotes/origin/HEAD "refs/remotes/origin/$BASE"
+
+    - uses: anthropics/claude-code-action@v1
+      with:
+        claude_code_oauth_token: ${{ inputs.claude_code_oauth_token }}
+        # The action resets CLAUDE.md and .claude/ to the base branch in the
+        # working tree, so a diff against the working tree would miss them
+        prompt: |
+          /security-review
+
+          Review the committed changes, `git diff origin/HEAD...HEAD`, not
+          the working tree.
+
+          Post anything you find as inline comments on PR
+          ${{ github.event.pull_request.number }}, with confirmed: true
+          (the tool holds back anything else); if there is nothing, post
+          nothing.
+        claude_args: >-
+          --allowedTools
+          "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"
