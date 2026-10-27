@@ -13,7 +13,7 @@ inputs:
     description: >-
       Print every Claude message and tool result to the job log, which shows
       the tool calls that were denied. Anyone who can see the repo can read
-      the log. On while the denials are diagnosed; to be turned off after.
+      the log, so turn it on only while diagnosing denied tool calls.
     required: false
     default: "true"
 
