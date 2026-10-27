@@ -34,6 +34,11 @@ runs:
       run: git symbolic-ref refs/remotes/origin/HEAD "refs/remotes/origin/$BASE"
 
     - uses: anthropics/claude-code-action@v1
+      # Subagents run in the background by default, and a non-interactive
+      # run ends when Claude's first turn does, so it would end while they
+      # are still reviewing and post nothing. Keep them in the foreground.
+      env:
+        CLAUDE_CODE_DISABLE_BACKGROUND_TASKS: "1"
       with:
         claude_code_oauth_token: ${{ inputs.claude_code_oauth_token }}
         # The command embeds a diff against the working tree, where the action
