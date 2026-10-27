@@ -9,6 +9,13 @@ inputs:
     description: Model alias or ID to review with. The "sonnet" alias follows the latest Sonnet.
     required: false
     default: sonnet
+  show_full_output:
+    description: >-
+      Print every Claude message and tool result to the job log, which shows
+      the tool calls that were denied. Anyone who can see the repo can read
+      the log. On while the denials are diagnosed; to be turned off after.
+    required: false
+    default: "true"
 
 runs:
   using: composite
@@ -38,6 +45,7 @@ runs:
         # can be told apart from one that found nothing. Only same-repo PRs
         # run this, so the content it echoes is trusted.
         display_report: true
+        show_full_output: ${{ inputs.show_full_output }}
         claude_args: >-
           --model ${{ inputs.model }}
           --allowedTools
